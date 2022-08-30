@@ -80,6 +80,7 @@ export const deeplyEqualsTest = () => {
     c: [1, NaN, 3]
   }
 
+  // TODO: test more cases & edge cases & use a test library peraphs
   return {
     true: [
       deeplyEquals('123', '123'),
