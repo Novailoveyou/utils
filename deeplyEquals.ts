@@ -20,80 +20,73 @@ export const deeplyEquals = (a: any, b: any): boolean => {
     return a === b
   }
 
-  const aIsArray = Array.isArray(a)
-  const bIsArray = Array.isArray(b)
+  return JSON.stringify(a) === JSON.stringify(b) // deeplyEquals({a: 1, b: 2}, {b: 2, a: 1}) // false
 
-  if (aIsArray && bIsArray) {
-    if (a.length !== b.length) return false
+  // slow and more generic
+  // const aIsArray = Array.isArray(a)
+  // const bIsArray = Array.isArray(b)
 
-    if (a.some((item, idx) => !deeplyEquals(item, b[idx]))) return false
+  // if (aIsArray && bIsArray) {
+  //   if (a.length !== b.length) return false
 
-    return true
-  }
+  //   if (a.some((item, idx) => !deeplyEquals(item, b[idx]))) return false
 
-  const aIsObject = typeof a === 'object' && !aIsPrimitive
-  const bIsObject = typeof b === 'object' && !bIsPrimitive
+  //   return true
+  // }
 
-  if (aIsObject && bIsObject) {
-    // TODO: handle Map & Set & Date & WeakMap & WeakSet
-    const aKeys = Object.keys(a)
-    const bKeys = Object.keys(b)
+  // const aIsObject = typeof a === 'object' && !aIsPrimitive
+  // const bIsObject = typeof b === 'object' && !bIsPrimitive
 
-    if (!deeplyEquals(aKeys, bKeys)) return false
+  // if (aIsObject && bIsObject) {
+  //   // TODO: handle Map & Set & Date & WeakMap & WeakSet
+  //   const aKeys = Object.keys(a)
+  //   const bKeys = Object.keys(b)
 
-    if (aKeys.some(key => !deeplyEquals(a[key], b[key]))) return false
+  //   if (!deeplyEquals(aKeys, bKeys)) return false
 
-    return true
-  }
+  //   if (aKeys.some(key => !deeplyEquals(a[key], b[key]))) return false
 
-  return false
+  //   return true
+  // }
+
+  // return false
 }
 
 export const deeplyEqualsTest = () => {
-  const obj1 = {}
-
-  const obj2 = {}
-
-  const obj3 = {
-    a: 1,
-    b: {
-      a: '123'
-    },
-    c: [1, 2, 4]
-  }
-
-  const obj4 = {
-    a: 1,
-    b: {
-      a: '123',
-      b: null
-    },
-    c: [1, NaN, 3]
-  }
-
-  const obj5 = {
-    a: 1,
-    b: {
-      a: '123',
-      b: null
-    },
-    c: [1, NaN, 3]
-  }
+  const array = new Array(100000).fill('a')
 
   // TODO: test more cases & edge cases & use a test library peraphs
   return {
     true: [
-      deeplyEquals('123', '123'),
+      deeplyEquals(1, 1),
+      deeplyEquals('a', 'a'),
       deeplyEquals(NaN, NaN),
-      deeplyEquals(obj1, obj2),
-      deeplyEquals(obj4, obj5)
+      deeplyEquals([], []),
+      deeplyEquals([1], [1]),
+      deeplyEquals(
+        [
+          [1, 2],
+          [3, 4]
+        ],
+        [
+          [1, 2],
+          [3, 4]
+        ]
+      ),
+      deeplyEquals({}, {}),
+      deeplyEquals({ a: 1 }, { a: 1 }),
+      deeplyEquals({ a: 1, obj: { b: 2 } }, { a: 1, obj: { b: 2 } }),
+      deeplyEquals(null, null),
+      deeplyEquals(undefined, undefined),
+      deeplyEquals(array, array)
     ],
     false: [
-      deeplyEquals(obj3, obj4),
-      deeplyEquals(123, '123'),
-      deeplyEquals(obj1, NaN),
-      deeplyEquals(obj1, null),
-      deeplyEquals(NaN, null)
+      deeplyEquals(1, 0),
+      deeplyEquals('a', 'b'),
+      deeplyEquals(NaN, 10),
+      deeplyEquals(NaN, 'NaN'),
+      deeplyEquals([], [1]),
+      deeplyEquals([10], [1])
     ]
   }
 }
